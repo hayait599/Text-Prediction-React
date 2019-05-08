@@ -4,7 +4,9 @@
     "browser": 1,
     "es6": true
   },
+  "parser": "babel-eslint",
   "parserOptions": {
+    "sourceType": "module",
     "ecmaVersion": 2017
   },
   "globals": {
