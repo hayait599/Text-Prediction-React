@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 
@@ -58,3 +59,16 @@ Editor.formats = [
 
 
 export default Editor;
+=======
+import '../statics/editor.css';
+
+export default function Editor(props) {
+  return (
+    <div className="Editor_container">
+      <textarea className="Editor" />
+    </div>
+  );
+};
+
+
+>>>>>>> 0391aae9c38a8470093fa50cd1dd595b9881ed9c

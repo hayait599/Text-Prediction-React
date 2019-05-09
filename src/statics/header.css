@@ -1,0 +1,18 @@
+.Img_container {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.Img_logo {
+  width: 150px;
+}
+
+.Title {
+  text-align: center;
+  padding: 10px;
+  color: indigo;
+  font-family: monospace;
+  font-size: 15px;
+}
