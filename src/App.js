@@ -1,9 +1,12 @@
 import React from 'react';
-import Editor from './components/Editor'; 
-
+import Editor from './components/Editor';
+import Header from './components/Header';
 function App() {
   return (
-    <Editor />
+    <div>
+      <Header />
+      <Editor />
+    </div>
   );
 }
 
