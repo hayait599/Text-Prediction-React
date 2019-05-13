@@ -13,7 +13,7 @@ class Editor extends React.Component {
     this.hintVisible = false
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onClick = this.onClick.bind(this)
-    
+
   }
 
   componentDidMount() {

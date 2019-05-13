@@ -11,7 +11,7 @@ export default function Header(props) {
         alt="wix-logo"
       />
       <p className="Title">Text Prediction</p>
-    </div >
+    </div>
   );
 };
 
