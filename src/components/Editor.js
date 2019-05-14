@@ -13,7 +13,8 @@ class Editor extends React.Component {
     this.hintVisible = false
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onClick = this.onClick.bind(this)
-
+    this.getBlot = this.getBlot.bind(this)
+    this.getDictionary = this.getDictionary.bind(this)
   }
 
   componentDidMount() {
@@ -76,6 +77,17 @@ class Editor extends React.Component {
     }
   }
 
+  async getDictionary() {
+    const blot = this.getBlot();
+    if (blot) {
+      const text = blot.text;
+      if (typeof text !== "undefined") {
+        const lastWord = text.trim().split(' ').splice(-1).join(' ');
+        const dicPredictions = await Api.getDictionaryPrediction({ lastWord })
+      }
+    }
+  }
+
   onKeyDown(event) {
     const keyCode = event.keyCode;
     const upCode = 38;
@@ -104,7 +116,6 @@ class Editor extends React.Component {
     }
   }
   onClick(e) {
-    console.log(e)
     if (this.hintVisible) {
       this.deleteHint(this.hintVisible)
     }
@@ -118,6 +129,7 @@ class Editor extends React.Component {
         }}
         className='Editor_container'
         onKeyDown={this.onKeyDown}
+        onChange={this.getDictionary}
         ref={(elm) => { this.quillRef = elm }}
       >
         <div

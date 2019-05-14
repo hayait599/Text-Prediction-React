@@ -15,6 +15,19 @@ class Api {
         })
     }
   }
+
+  getDictionaryPrediction({ lastWord }) {
+    if (lastWord !== 'undefined' && lastWord.length !== 0 && lastWord  ) {
+      return axios.get(`https://protected-mesa-89217.herokuapp.com/dictionary/${lastWord}`, {
+        method: 'HEAD',
+        mode: 'no-cors',
+      })
+        .then(res => {
+          console.log(res.data)
+          return res.data
+        })
+    }
+  }
 }
 
 export default new Api();
