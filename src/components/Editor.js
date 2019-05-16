@@ -125,14 +125,14 @@ class Editor extends React.Component {
     const tabCode = 9;
     const enterCode = 13;
 
-    if (keyCode === downCode && this.state.passToDrop) {
+    if (keyCode === downCode && this.state.passToDrop.visible) {
       event.preventDefault();
       event.stopPropagation();
       this.dropDownRef.onKeyDown();
       return;
     }
 
-    if (keyCode === upCode && this.state.passToDrop) {
+    if (keyCode === upCode && this.state.passToDrop.visible) {
       event.preventDefault();
       event.stopPropagation();
       this.dropDownRef.onKeyUp();
