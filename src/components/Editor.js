@@ -1,5 +1,7 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import ReactQuill, { Quill } from 'react-quill';
+import DropDown from './DropDown';
 import Api from '../api/EditorAPI';
 import '../statics/editor.css';
 import 'react-quill/dist/quill.bubble.css';
@@ -10,11 +12,17 @@ class Editor extends React.Component {
     super(props)
     this.quillRef = React.createRef();
     this.editorRef = React.createRef();
+    this.dropDownRef = React.createRef();
     this.hintVisible = false
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onClick = this.onClick.bind(this)
     this.getBlot = this.getBlot.bind(this)
     this.getDictionary = this.getDictionary.bind(this)
+    this.state = {
+      passToDrop: {
+        visible: false
+      }
+    }
   }
 
   componentDidMount() {
@@ -37,7 +45,6 @@ class Editor extends React.Component {
       { color: '#848484' },
       'api'
     );
-    return
     this.hintVisible = { rangeFrom: range, word: text }
     this.editorRef.setSelection(range, Quill.sources.API);
   }
@@ -70,6 +77,27 @@ class Editor extends React.Component {
           const hintText = text.trim().split(' ').splice(-1).join(' ');
           const hints = await Api.getHints({ hintText })
           if (hints) {
+            if (hints.length > 2) {
+              const height = (window.innerHeight || document.documentElement.clientHeight);
+              const parentNode = ReactDOM.findDOMNode(this.quillRef).getBoundingClientRect();
+              const distanceToTop = parentNode.top - 6;
+              const distanceToBottom = height - parentNode.bottom - 6;
+              this.editorRef = this.quillRef.getEditor()
+              const range = this.editorRef.getSelection();
+              const bounds = this.editorRef.getBounds(range);
+              const hintsArray = hints.map(item => item.word)
+              this.setState({
+                passToDrop: {
+                  ...this.state.passToDrop,
+                  visible: true,
+                  bounds,
+                  distanceToBottom,
+                  distanceToTop,
+                  hintsArray
+                }
+              })
+              return
+            }
             this.insertHint(hints[hints.length - 1].word)
           }
         }
@@ -79,6 +107,7 @@ class Editor extends React.Component {
 
   async getDictionary() {
     const blot = this.getBlot();
+    const range = this.editorRef.getSelection();
     if (blot) {
       const text = blot.text;
       if (typeof text !== "undefined") {
@@ -92,54 +121,101 @@ class Editor extends React.Component {
     const keyCode = event.keyCode;
     const upCode = 38;
     const downCode = 40;
-    const spaceCode = 32
-    const tabCode = 9
-    const enterCode = 13
+    const spaceCode = 32;
+    const tabCode = 9;
+    const enterCode = 13;
 
-    if (keyCode === enterCode) {
+    if (keyCode === downCode && this.state.passToDrop) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.dropDownRef.onKeyDown();
       return;
     }
 
-    if (keyCode === spaceCode) {
-      this.getHints()
+    if (keyCode === upCode && this.state.passToDrop) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.dropDownRef.onKeyUp();
+      return;
     }
-    if (keyCode === tabCode) {
 
+    this.setState({
+      passToDrop: {
+        ...this.state.passToDrop,
+        visible: false
+      }
+    })
+
+    this.editorRef = this.quillRef.getEditor();
+
+    if (keyCode === enterCode) {
+      return
+    }
+
+    if (keyCode === spaceCode) {
+      this.getHints();
+    }
+
+    if (keyCode === tabCode) {
       if (this.hintVisible) {
-        this.addHint()
+        this.addHint();
       }
       return
     }
 
     if (this.hintVisible) {
-      this.deleteHint(this.hintVisible)
+      this.deleteHint(this.hintVisible);
     }
   }
+
   onClick(e) {
+    this.setState({
+      passToDrop: {
+        ...this.state.passToDrop,
+        visible: false
+      }
+    })
     if (this.hintVisible) {
-      this.deleteHint(this.hintVisible)
+      this.deleteHint(this.hintVisible);
     }
   }
+
+  renderDropDown() {
+    if (this.state.passToDrop.visible) {
+      return (
+        <DropDown
+          properties={this.state.passToDrop}
+          ref={elm => this.dropDownRef = elm}
+        />
+      )
+    }
+    return <div />
+  }
+
   render() {
     return (
-      <ReactQuill
-        theme='bubble'
-        modules={{
-          toolbar: false,
-        }}
-        className='Editor_container'
-        onKeyDown={this.onKeyDown}
-        onChange={this.getDictionary}
-        ref={(elm) => { this.quillRef = elm }}
-      >
-        <div
-          key='editor'
-          ref='editor'
-          className="quill-contents Editor"
-          onClick={this.onClick}
-          onContextMenu={this.onClick}
-        />
-      </ReactQuill>
+      <div className="Editor_container"   >
+        <ReactQuill
+          theme='bubble'
+          modules={{
+            toolbar: false,
+          }}
+          className='Editor_wrapper'
+          onKeyDown={this.onKeyDown}
+          onChange={this.getDictionary}
+          ref={(elm) => { this.quillRef = elm }}
+        >
+          <div
+            key='editor'
+            ref='editor'
+            className="quill-contents Editor"
+            onClick={this.onClick}
+            onContextMenu={this.onClick}
+          />
+
+        </ReactQuill>
+        {this.renderDropDown()}
+      </div>
     );
   }
 }
