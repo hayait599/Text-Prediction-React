@@ -38,6 +38,7 @@ class Editor extends React.Component {
   }
 
   insertHint(text) {
+    this.editorRef = this.quillRef.getEditor();
     const range = this.editorRef.getSelection();
     this.editorRef.insertText(
       range,
@@ -145,9 +146,7 @@ class Editor extends React.Component {
         visible: false
       }
     })
-
-    this.editorRef = this.quillRef.getEditor();
-
+    
     if (keyCode === enterCode) {
       return
     }
