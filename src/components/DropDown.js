@@ -15,7 +15,6 @@ class DropDown extends React.Component {
     this.selectedRow = 0
   }
 
-
   componentDidMount() {
     const { distanceToBottom, distanceToTop, bounds, hintsArray } = this.props.properties;
     for (let i = 0; i < hintsArray.length; i++) {
@@ -37,7 +36,7 @@ class DropDown extends React.Component {
     }
   }
 
-  heighLightRow(index) {
+  highLightRow(index) {
     if (this.oldIndex !== -1 && this.rows[this.oldIndex]) {
       this.rows[this.oldIndex].style.backgroundColor = '#ffffff';
     }
@@ -50,7 +49,7 @@ class DropDown extends React.Component {
       return this.rows[this.index];
     }
     this.index += step;
-    this.heighLightRow(this.index);
+    this.highLightRow(this.index);
     this.selectedRow = this.index
   }
 
