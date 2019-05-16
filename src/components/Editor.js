@@ -56,6 +56,7 @@ class Editor extends React.Component {
   }
 
   addHint() {
+    this.editorRef = this.quillRef.getEditor();
     const cursorPosition = this.editorRef.getSelection().index;
     const { rangeFrom, word } = this.hintVisible
     this.editorRef.formatText(
@@ -146,7 +147,7 @@ class Editor extends React.Component {
         visible: false
       }
     })
-    
+
     if (keyCode === enterCode) {
       return
     }
