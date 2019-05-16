@@ -18,6 +18,7 @@ class Editor extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.getBlot = this.getBlot.bind(this)
     this.getDictionary = this.getDictionary.bind(this)
+    this.addHintFromDropDown = this.addHintFromDropDown.bind(this)
     this.state = {
       passToDrop: {
         visible: false
@@ -68,6 +69,20 @@ class Editor extends React.Component {
     this.editorRef.setSelection(cursorPosition + `${word}`.length - 1, Quill.sources.API);
     this.hintVisible = null
   }
+
+  addHintFromDropDown(text) {
+    this.setState({
+      passToDrop: {
+        ...this.state.passToDrop,
+        visible: false
+      }
+    })
+    this.editorRef = this.quillRef.getEditor();
+    const cursorPosition = this.editorRef.getSelection().index;
+    this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
+    this.editorRef.setSelection(cursorPosition + `${text}`.length - 1, Quill.sources.USER);
+    this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.USER);
+  };
 
   async getHints() {
     const blot = this.getBlot();
@@ -140,6 +155,13 @@ class Editor extends React.Component {
       this.dropDownRef.onKeyUp();
       return;
     }
+    
+    if (keyCode === tabCode && this.state.passToDrop.visible) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.dropDownRef.onWordSelection();
+      return;
+    }
 
     this.setState({
       passToDrop: {
@@ -157,6 +179,8 @@ class Editor extends React.Component {
     }
 
     if (keyCode === tabCode) {
+      event.preventDefault();
+      event.stopPropagation();
       if (this.hintVisible) {
         this.addHint();
       }
@@ -186,6 +210,7 @@ class Editor extends React.Component {
         <DropDown
           properties={this.state.passToDrop}
           ref={elm => this.dropDownRef = elm}
+          addHint={this.addHintFromDropDown}
         />
       )
     }
@@ -212,7 +237,6 @@ class Editor extends React.Component {
             onClick={this.onClick}
             onContextMenu={this.onClick}
           />
-
         </ReactQuill>
         {this.renderDropDown()}
       </div>
