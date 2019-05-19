@@ -54,6 +54,8 @@ class DropDown extends React.Component {
     }
     this.index += step
     this.highLightRow(this.index)
+    const row = document.getElementById(this.index)
+    this.dropDownRef.scrollTo({ top: row.offsetTop })
     this.selectedRow = this.index
   }
 
