@@ -51,9 +51,13 @@ class Editor extends React.Component {
     this.editorRef.setSelection(range, Quill.sources.API);
   }
 
-  deleteHint({ rangeFrom, word }) {
-    this.editorRef.deleteText(rangeFrom.index, word.length);
-    this.hintVisible = null
+  deleteHint() {
+    let toDelete = document.getElementsByTagName('span')[0]
+    if (toDelete) {
+      toDelete.remove();
+      this.hintVisible = null
+    }
+    //this.editorRef.deleteText(rangeFrom.index, word.length);
   }
 
   addHint() {
@@ -155,7 +159,7 @@ class Editor extends React.Component {
       this.dropDownRef.onKeyUp();
       return;
     }
-    
+
     if (keyCode === tabCode && this.state.passToDrop.visible) {
       event.preventDefault();
       event.stopPropagation();
@@ -188,7 +192,7 @@ class Editor extends React.Component {
     }
 
     if (this.hintVisible) {
-      this.deleteHint(this.hintVisible);
+      this.deleteHint();
     }
   }
 
@@ -200,7 +204,7 @@ class Editor extends React.Component {
       }
     })
     if (this.hintVisible) {
-      this.deleteHint(this.hintVisible);
+      this.deleteHint();
     }
   }
 
