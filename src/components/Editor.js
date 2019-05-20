@@ -29,7 +29,9 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    this.editorRef = this.quillRef.getEditor()
+    this.editorRef = this.quillRef.getEditor();
+    window.onclick = this.onClick;
+    window.oncontextmenu = this.onClick;
   }
 
   getBlot() {
@@ -100,35 +102,35 @@ class Editor extends React.Component {
 
   async getHints() {
     const blot = this.getBlot();
-    if (blot) { 
+    if (blot) {
       const text = blot.text;
       if (text) {
-          const hintText = text.trim().split(' ').splice(-1).join(' ');
-          const hints = await Api.getHints({ hintText })
-          if (hints) {
-            if (hints.length > 2) {
-              const height = (window.innerHeight || document.documentElement.clientHeight);
-              const parentNode = ReactDOM.findDOMNode(this.quillRef).getBoundingClientRect();
-              const distanceToTop = parentNode.top - 6;
-              const distanceToBottom = height - parentNode.bottom - 6;
-              this.editorRef = this.quillRef.getEditor()
-              const range = this.editorRef.getSelection();
-              const bounds = this.editorRef.getBounds(range);
-              const hintsArray = hints.map(item => item.word)
-              this.setState({
-                dictionary: false,
-                passToDrop: {
-                  ...this.state.passToDrop,
-                  visible: true,
-                  bounds,
-                  distanceToBottom,
-                  distanceToTop,
-                  hintsArray
-                }
-              })
-              return
-            }
-            this.insertHint(hints[hints.length - 1].word)
+        const hintText = text.trim().split(' ').splice(-1).join(' ');
+        const hints = await Api.getHints({ hintText })
+        if (hints) {
+          if (hints.length > 2) {
+            const height = (window.innerHeight || document.documentElement.clientHeight);
+            const parentNode = ReactDOM.findDOMNode(this.quillRef).getBoundingClientRect();
+            const distanceToTop = parentNode.top - 6;
+            const distanceToBottom = height - parentNode.bottom - 6;
+            this.editorRef = this.quillRef.getEditor()
+            const range = this.editorRef.getSelection();
+            const bounds = this.editorRef.getBounds(range);
+            const hintsArray = hints.map(item => item.word)
+            this.setState({
+              dictionary: false,
+              passToDrop: {
+                ...this.state.passToDrop,
+                visible: true,
+                bounds,
+                distanceToBottom,
+                distanceToTop,
+                hintsArray
+              }
+            })
+            return
+          }
+          this.insertHint(hints[hints.length - 1].word)
         }
       }
     }
@@ -226,7 +228,7 @@ class Editor extends React.Component {
     if (keyCode === spaceCode) {
       console.log('space')
       this.getHints();
-    }else {
+    } else {
       console.log('not space')
       this.getDictionary();
     }
@@ -273,8 +275,6 @@ class Editor extends React.Component {
             key='editor'
             ref='editor'
             className="quill-contents Editor"
-            onClick={this.onClick}
-            onContextMenu={this.onClick}
           />
         </ReactQuill>
         {this.renderDropDown()}
