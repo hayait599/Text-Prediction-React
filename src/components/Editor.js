@@ -55,13 +55,14 @@ class Editor extends React.Component {
     this.editorRef.setSelection(range, Quill.sources.API);
   }
 
-  deleteHint() {
-    let toDelete = document.getElementsByTagName('span')[0]
-    if (toDelete) {
-      toDelete.remove();
-      this.hintVisible = null
-    }
-    //this.editorRef.deleteText(rangeFrom.index, word.length);
+  deleteHint({ rangeFrom, word }) {
+    // let toDelete = document.getElementsByTagName('span')[0]
+    // if (toDelete) {
+    //   toDelete.remove();
+    //   this.hintVisible = null
+    // }
+    this.editorRef.deleteText(rangeFrom.index, word.length);
+    this.hintVisible = null
   }
 
   addHint() {
@@ -222,7 +223,7 @@ class Editor extends React.Component {
     }
 
     if (this.hintVisible) {
-      this.deleteHint();
+      this.deleteHint(this.hintVisible);
     }
 
     if (keyCode === spaceCode) {
@@ -242,7 +243,7 @@ class Editor extends React.Component {
       }
     })
     if (this.hintVisible) {
-      this.deleteHint();
+      this.deleteHint(this.hintVisible);
     }
   }
 
