@@ -227,10 +227,8 @@ class Editor extends React.Component {
     }
 
     if (keyCode === spaceCode) {
-      console.log('space')
       this.getHints();
     } else {
-      console.log('not space')
       this.getDictionary();
     }
   }
