@@ -23,7 +23,6 @@ class Api {
         mode: 'no-cors',
       })
         .then(res => {
-          console.log(res.data)
           return res.data
         })
     }

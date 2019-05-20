@@ -18,8 +18,10 @@ class Editor extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.getBlot = this.getBlot.bind(this)
     this.getDictionary = this.getDictionary.bind(this)
+    this.getHints = this.getHints.bind(this)
     this.addHintFromDropDown = this.addHintFromDropDown.bind(this)
     this.state = {
+      dictionary: false,
       passToDrop: {
         visible: false
       }
@@ -81,20 +83,26 @@ class Editor extends React.Component {
         visible: false
       }
     })
+    const blott = this.getBlot()
+    const blotText = blott.text
+    const lastWord = blotText.trim().split(' ').splice(-1).join(' ');
     this.editorRef = this.quillRef.getEditor();
     const cursorPosition = this.editorRef.getSelection().index;
-    this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
+    {
+      this.state.dictionary ?
+        this.editorRef.insertText(cursorPosition - 1, `${text.slice(lastWord.length, text.length)}`, Quill.sources.USER)
+        :
+        this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
+    }
     this.editorRef.setSelection(cursorPosition + `${text}`.length - 1, Quill.sources.USER);
     this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.USER);
   };
 
   async getHints() {
     const blot = this.getBlot();
-    if (blot) {
+    if (blot) { 
       const text = blot.text;
       if (text) {
-        const space = text.split(' ');
-        if (space[space.length - 1] !== '') {
           const hintText = text.trim().split(' ').splice(-1).join(' ');
           const hints = await Api.getHints({ hintText })
           if (hints) {
@@ -108,6 +116,7 @@ class Editor extends React.Component {
               const bounds = this.editorRef.getBounds(range);
               const hintsArray = hints.map(item => item.word)
               this.setState({
+                dictionary: false,
                 passToDrop: {
                   ...this.state.passToDrop,
                   visible: true,
@@ -120,7 +129,6 @@ class Editor extends React.Component {
               return
             }
             this.insertHint(hints[hints.length - 1].word)
-          }
         }
       }
     }
@@ -128,12 +136,36 @@ class Editor extends React.Component {
 
   async getDictionary() {
     const blot = this.getBlot();
-    const range = this.editorRef.getSelection();
     if (blot) {
       const text = blot.text;
       if (typeof text !== "undefined") {
         const lastWord = text.trim().split(' ').splice(-1).join(' ');
         const dicPredictions = await Api.getDictionaryPrediction({ lastWord })
+        const dicPredicts = dicPredictions.slice(0, 4);
+        if (dicPredicts) {
+          if (dicPredicts.length > 2) {
+            const height = (window.innerHeight || document.documentElement.clientHeight);
+            const parentNode = ReactDOM.findDOMNode(this.quillRef).getBoundingClientRect();
+            const distanceToTop = parentNode.top - 6;
+            const distanceToBottom = height - parentNode.bottom - 6;
+            this.editorRef = this.quillRef.getEditor()
+            const range = this.editorRef.getSelection();
+            const bounds = this.editorRef.getBounds(range);
+            const hintsArray = dicPredicts
+            this.setState({
+              dictionary: true,
+              passToDrop: {
+                ...this.state.passToDrop,
+                visible: true,
+                bounds,
+                distanceToBottom,
+                distanceToTop,
+                hintsArray
+              }
+            })
+            return
+          }
+        }
       }
     }
   }
@@ -178,10 +210,6 @@ class Editor extends React.Component {
       return
     }
 
-    if (keyCode === spaceCode) {
-      this.getHints();
-    }
-
     if (keyCode === tabCode) {
       event.preventDefault();
       event.stopPropagation();
@@ -193,6 +221,14 @@ class Editor extends React.Component {
 
     if (this.hintVisible) {
       this.deleteHint();
+    }
+
+    if (keyCode === spaceCode) {
+      console.log('space')
+      this.getHints();
+    }else {
+      console.log('not space')
+      this.getDictionary();
     }
   }
 
@@ -230,8 +266,7 @@ class Editor extends React.Component {
             toolbar: false,
           }}
           className='Editor_wrapper'
-          onKeyDown={this.onKeyDown}
-          onChange={this.getDictionary}
+          onKeyUp={this.onKeyDown}
           ref={(elm) => { this.quillRef = elm }}
         >
           <div
