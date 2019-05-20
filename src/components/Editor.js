@@ -15,6 +15,7 @@ class Editor extends React.Component {
     this.dropDownRef = React.createRef();
     this.hintVisible = false
     this.onKeyDown = this.onKeyDown.bind(this)
+    this.onKeyUp = this.onKeyUp.bind(this)
     this.onClick = this.onClick.bind(this)
     this.getBlot = this.getBlot.bind(this)
     this.getDictionary = this.getDictionary.bind(this)
@@ -173,6 +174,21 @@ class Editor extends React.Component {
     }
   }
 
+  onKeyUp(event) {
+    const keyCode = event.keyCode;
+    const ignoreCodes = [32, 39, 35, 9, 8]
+    if (!ignoreCodes.includes(keyCode)) {
+      this.getDictionary();
+    } else {
+      this.setState({
+        passToDrop: {
+          ...this.state.passToDrop,
+          visible: false
+        }
+      })
+    }
+  }
+
   onKeyDown(event) {
     const keyCode = event.keyCode;
     const upCode = 38;
@@ -228,8 +244,9 @@ class Editor extends React.Component {
 
     if (keyCode === spaceCode) {
       this.getHints();
+
     } else {
-      this.getDictionary();
+      //  this.getDictionary();
     }
   }
 
@@ -267,7 +284,8 @@ class Editor extends React.Component {
             toolbar: false,
           }}
           className='Editor_wrapper'
-          onKeyUp={this.onKeyDown}
+          onKeyDown={this.onKeyDown}
+          onKeyUp={this.onKeyUp}
           ref={(elm) => { this.quillRef = elm }}
         >
           <div
