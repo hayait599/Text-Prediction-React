@@ -296,27 +296,21 @@ class Editor extends React.Component {
       <div className="Main_container">
         <div className="CheckBox_container">
           <div class="CheckBox_item">
-
             <Checkbox
               size={2}
               color='#4b0082'
               checked={this.state.enabelWordPrediction}
               onChange={() => this.setState({ enabelWordPrediction: !this.state.enabelWordPrediction })}
             />
-
             <label>Enabel Word By Word Prediction</label>
-
           </div>
           <div class="CheckBox_item">
-
             <Checkbox
               size={2}
               color='#4b0082'
               checked={this.state.enableKeyPrediction}
               onChange={() => this.setState({ enableKeyPrediction: !this.state.enableKeyPrediction })}
             />
-
-
             <label>Enabel letter By letter Prediction</label>
           </div>
         </div>
