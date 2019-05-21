@@ -187,7 +187,6 @@ class Editor extends React.Component {
     if (this.timer !== null) {
       clearTimeout(this.timer);
     }
-
     if (!ignoreCodes.includes(keyCode)) {
       this.timer = setTimeout(() => this.getDictionary(), 500);
     } else {
@@ -207,8 +206,6 @@ class Editor extends React.Component {
     const spaceCode = 32;
     const tabCode = 9;
     const enterCode = 13;
-
-
 
     if (keyCode === downCode && this.state.passToDrop.visible) {
       event.preventDefault();
@@ -230,7 +227,7 @@ class Editor extends React.Component {
       this.dropDownRef.onWordSelection();
       return;
     }
-    
+
     this.setState({
       passToDrop: {
         ...this.state.passToDrop,
@@ -259,7 +256,7 @@ class Editor extends React.Component {
     }
 
     if (keyCode === spaceCode) {
-      this.getHints();
+      this.getHints()
     }
   }
 
