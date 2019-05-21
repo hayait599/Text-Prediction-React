@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactQuill, { Quill } from 'react-quill';
-import Checkbox from 'react-simple-checkbox';
 import DropDown from './DropDown';
+import CheckboxSection from './CheckboxSection';
 import Api from '../api/EditorAPI';
 import '../statics/editor.css';
 import 'react-quill/dist/quill.bubble.css';
@@ -101,7 +101,7 @@ class Editor extends React.Component {
     } else {
       this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
     }
-  
+
     this.editorRef.setSelection(cursorPosition + `${text}`.length - 1, Quill.sources.USER);
     this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.USER);
   };
@@ -293,26 +293,12 @@ class Editor extends React.Component {
   render() {
     return (
       <div className="Main_container">
-        <div className="CheckBox_container">
-          <div className="CheckBox_item">
-            <Checkbox
-              size={2}
-              color='#4b0082'
-              checked={this.state.enableLanguagePrediction}
-              onChange={() => this.setState({ enableLanguagePrediction: !this.state.enableLanguagePrediction })}
-            />
-            <label>Language Prediction</label>
-          </div>
-          <div className="CheckBox_item">
-            <Checkbox
-              size={2}
-              color='#4b0082'
-              checked={this.state.enableDictionaryPrediction}
-              onChange={() => this.setState({ enableDictionaryPrediction: !this.state.enableDictionaryPrediction })}
-            />
-            <label>Dictionary Prediction</label>
-          </div>
-        </div>
+        <CheckboxSection
+          enableLanguagePrediction={this.state.enableLanguagePrediction}
+          enableDictionaryPrediction={this.state.enableDictionaryPrediction}
+          onLanguageChange={() => this.setState({ enableLanguagePrediction: !this.state.enableLanguagePrediction })}
+          onDictionaryChange={() => this.setState({ enableDictionaryPrediction: !this.state.enableDictionaryPrediction })}
+        />
         <div className="Editor_container">
           <ReactQuill
             theme='bubble'
