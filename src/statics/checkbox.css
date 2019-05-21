@@ -1,18 +1,21 @@
+.CheckBox_container {
+    display: flex;
+    flex-direction: row;
+    font-size: 13px; 
+  }
+
 .CheckBox_item {
     display: flex;
     flex-direction: row;
     flex: 0.5;
     font-size: 13px;
     align-items: center; 
-    padding-bottom: 10px
+    padding-bottom: 20px;
+    justify-content: center;
   }
+
   .CheckBox_item label {
     font-size: 12px;
     margin-top: 10px
   }
-  .CheckBox_container {
-    display: flex;
-    flex-direction: row;
-    font-size: 13px;
-   
-  }
+  

@@ -4,12 +4,12 @@
   top: 30%;
   left: 50%;
   transform: translateX(-50%);
-  width: 500px;
+  width: 600px;
   height: 400;
 }
 .Editor_container {
   position: absolute;
-  width: 500px;
+  width: 600px;
   height: 300px;
 
 }
@@ -19,7 +19,7 @@
 }
 .Editor {
   display: inline-block;
-  width: 500px;
+  width: 600px;
   height: 100%;
   background-color: #ffffff;
 }
