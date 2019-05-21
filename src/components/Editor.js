@@ -295,7 +295,7 @@ class Editor extends React.Component {
     return (
       <div className="Main_container">
         <div className="CheckBox_container">
-          <div class="CheckBox_item">
+          <div className="CheckBox_item">
             <Checkbox
               size={2}
               color='#4b0082'
@@ -304,7 +304,7 @@ class Editor extends React.Component {
             />
             <label>Enabel Word By Word Prediction</label>
           </div>
-          <div class="CheckBox_item">
+          <div className="CheckBox_item">
             <Checkbox
               size={2}
               color='#4b0082'
