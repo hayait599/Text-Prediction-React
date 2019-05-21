@@ -97,7 +97,7 @@ class Editor extends React.Component {
     const cursorPosition = this.editorRef.getSelection().index;
     {
       this.state.dictionary ?
-        this.editorRef.insertText(cursorPosition - 1, `${text.slice(lastWord.length, text.length)}`, Quill.sources.USER)
+        this.editorRef.insertText(cursorPosition - 1, `${text.slice(lastWord.length, text.length)}`.replace('\t',''), Quill.sources.USER)
         :
         this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
     }

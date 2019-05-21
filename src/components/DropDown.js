@@ -73,7 +73,7 @@ class DropDown extends React.Component {
   }
 
   onWordSelection(addSpace) {
-    const word = this.rows[this.selectedRow].hint
+    const word = this.rows[this.selectedRow].hint.trim()
     if (addSpace) {
       this.props.addHint(` ${word}`)
     } else {
