@@ -208,9 +208,7 @@ class Editor extends React.Component {
     const tabCode = 9;
     const enterCode = 13;
 
-    if (!this.state.enabelWordPrediction) {
-      return
-    }
+
 
     if (keyCode === downCode && this.state.passToDrop.visible) {
       event.preventDefault();
@@ -232,7 +230,7 @@ class Editor extends React.Component {
       this.dropDownRef.onWordSelection();
       return;
     }
-
+    
     this.setState({
       passToDrop: {
         ...this.state.passToDrop,
@@ -244,6 +242,9 @@ class Editor extends React.Component {
       return
     }
 
+    if (!this.state.enabelWordPrediction) {
+      return
+    }
     if (keyCode === tabCode) {
       event.preventDefault();
       event.stopPropagation();
