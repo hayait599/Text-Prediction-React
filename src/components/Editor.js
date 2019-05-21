@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactQuill, { Quill } from 'react-quill';
+import Checkbox from 'react-simple-checkbox';
 import DropDown from './DropDown';
 import Api from '../api/EditorAPI';
 import '../statics/editor.css';
@@ -22,6 +23,8 @@ class Editor extends React.Component {
     this.getHints = this.getHints.bind(this)
     this.addHintFromDropDown = this.addHintFromDropDown.bind(this)
     this.state = {
+      enableKeyPrediction: false,
+      enabelWordPrediction: false,
       dictionary: false,
       passToDrop: {
         visible: false
@@ -175,6 +178,9 @@ class Editor extends React.Component {
   }
 
   onKeyUp(event) {
+    if (!this.state.enableKeyPrediction) {
+      return
+    }
     const keyCode = event.keyCode;
     const ignoreCodes = [32, 39, 35, 9, 8]
     if (!ignoreCodes.includes(keyCode)) {
@@ -196,6 +202,10 @@ class Editor extends React.Component {
     const spaceCode = 32;
     const tabCode = 9;
     const enterCode = 13;
+
+    if (!this.state.enabelWordPrediction) {
+      return
+    }
 
     if (keyCode === downCode && this.state.passToDrop.visible) {
       event.preventDefault();
@@ -244,9 +254,6 @@ class Editor extends React.Component {
 
     if (keyCode === spaceCode) {
       this.getHints();
-
-    } else {
-      //  this.getDictionary();
     }
   }
 
@@ -277,24 +284,52 @@ class Editor extends React.Component {
 
   render() {
     return (
-      <div className="Editor_container"   >
-        <ReactQuill
-          theme='bubble'
-          modules={{
-            toolbar: false,
-          }}
-          className='Editor_wrapper'
-          onKeyDown={this.onKeyDown}
-          onKeyUp={this.onKeyUp}
-          ref={(elm) => { this.quillRef = elm }}
-        >
-          <div
-            key='editor'
-            ref='editor'
-            className="quill-contents Editor"
-          />
-        </ReactQuill>
-        {this.renderDropDown()}
+      <div className="Main_container">
+        <div className="CheckBox_container">
+          <div class="CheckBox_item">
+
+            <Checkbox
+              size={2}
+              color='#4b0082'
+              checked={this.state.enabelWordPrediction}
+              onChange={() => this.setState({ enabelWordPrediction: !this.state.enabelWordPrediction })}
+            />
+
+            <label>Enabel Word By Word Prediction</label>
+
+          </div>
+          <div class="CheckBox_item">
+
+            <Checkbox
+              size={2}
+              color='#4b0082'
+              checked={this.state.enableKeyPrediction}
+              onChange={() => this.setState({ enableKeyPrediction: !this.state.enableKeyPrediction })}
+            />
+
+
+            <label>Enabel letter By letter Prediction</label>
+          </div>
+        </div>
+        <div className="Editor_container">
+          <ReactQuill
+            theme='bubble'
+            modules={{
+              toolbar: false,
+            }}
+            className='Editor_wrapper'
+            onKeyDown={this.onKeyDown}
+            onKeyUp={this.onKeyUp}
+            ref={(elm) => { this.quillRef = elm }}
+          >
+            <div
+              key='editor'
+              ref='editor'
+              className="quill-contents Editor"
+            />
+          </ReactQuill>
+          {this.renderDropDown()}
+        </div>
       </div>
     );
   }
