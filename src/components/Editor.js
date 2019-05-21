@@ -95,12 +95,13 @@ class Editor extends React.Component {
     const lastWord = blotText.trim().split(' ').splice(-1).join(' ');
     this.editorRef = this.quillRef.getEditor();
     const cursorPosition = this.editorRef.getSelection().index;
-    {
-      this.state.dictionary ?
-        this.editorRef.insertText(cursorPosition - 1, `${text.slice(lastWord.length, text.length)}`.replace('\t',''), Quill.sources.USER)
-        :
-        this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
+    if (this.state.dictionary) {
+      text = `${text.slice(lastWord.length, text.length)}`
+      this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER)
+    } else {
+      this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
     }
+  
     this.editorRef.setSelection(cursorPosition + `${text}`.length - 1, Quill.sources.USER);
     this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.USER);
   };
