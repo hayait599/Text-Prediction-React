@@ -1,0 +1,18 @@
+.DropDown {
+    background-color: #ffffff;
+    position: absolute;
+    top: 0px;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    overflow-x: 'hidden';
+    overflow-y: scroll;
+    z-index: 3;
+  }
+  .DropDown div {
+    padding: 0.5px 2px;
+    font-size: 13px;
+    color: #494848;
+    cursor: pointer
+  }
+  
