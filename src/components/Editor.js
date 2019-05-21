@@ -142,10 +142,10 @@ class Editor extends React.Component {
     const blot = this.getBlot();
     if (blot) {
       const text = blot.text;
-      if (typeof text !== "undefined") {
+      if (typeof text != "undefined") {
         const lastWord = text.trim().split(' ').splice(-1).join(' ');
         const dicPredictions = await Api.getDictionaryPrediction({ lastWord })
-        const dicPredicts = dicPredictions.slice(0, 4);
+        const dicPredicts = dicPredictions.slice(0, 5);
         if (dicPredicts) {
           if (dicPredicts.length > 2) {
             const height = (window.innerHeight || document.documentElement.clientHeight);
@@ -177,8 +177,13 @@ class Editor extends React.Component {
   onKeyUp(event) {
     const keyCode = event.keyCode;
     const ignoreCodes = [32, 39, 35, 9, 8]
+
+    if (this.timer !== null) {
+      clearTimeout(this.timer);
+    }
+
     if (!ignoreCodes.includes(keyCode)) {
-      this.getDictionary();
+      this.timer = setTimeout(() => this.getDictionary(), 500);
     } else {
       this.setState({
         passToDrop: {
@@ -273,6 +278,10 @@ class Editor extends React.Component {
       )
     }
     return <div />
+  }
+
+  componentDidMount() {
+    this.timer = null;
   }
 
   render() {
