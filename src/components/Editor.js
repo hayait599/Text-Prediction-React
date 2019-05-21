@@ -23,8 +23,8 @@ class Editor extends React.Component {
     this.getHints = this.getHints.bind(this)
     this.addHintFromDropDown = this.addHintFromDropDown.bind(this)
     this.state = {
-      enableKeyPrediction: false,
-      enabelWordPrediction: false,
+      enableDictionaryPrediction: false,
+      enableLanguagePrediction: false,
       dictionary: false,
       passToDrop: {
         visible: false
@@ -146,7 +146,7 @@ class Editor extends React.Component {
     const blot = this.getBlot();
     if (blot) {
       const text = blot.text;
-      if (typeof text != "undefined") {
+      if (typeof text !== "undefined") {
         const lastWord = text.trim().split(' ').splice(-1).join(' ');
         const dicPredictions = await Api.getDictionaryPrediction({ lastWord })
         const dicPredicts = dicPredictions.slice(0, 5);
@@ -179,7 +179,7 @@ class Editor extends React.Component {
   }
 
   onKeyUp(event) {
-    if (!this.state.enableKeyPrediction) {
+    if (!this.state.enableDictionaryPrediction) {
       return
     }
     const keyCode = event.keyCode;
@@ -240,7 +240,7 @@ class Editor extends React.Component {
       return
     }
 
-    if (!this.state.enabelWordPrediction) {
+    if (!this.state.enableLanguagePrediction) {
       return
     }
     if (keyCode === tabCode) {
@@ -298,19 +298,19 @@ class Editor extends React.Component {
             <Checkbox
               size={2}
               color='#4b0082'
-              checked={this.state.enabelWordPrediction}
-              onChange={() => this.setState({ enabelWordPrediction: !this.state.enabelWordPrediction })}
+              checked={this.state.enableLanguagePrediction}
+              onChange={() => this.setState({ enableLanguagePrediction: !this.state.enableLanguagePrediction })}
             />
-            <label>Enabel Word By Word Prediction</label>
+            <label>Language Prediction</label>
           </div>
           <div className="CheckBox_item">
             <Checkbox
               size={2}
               color='#4b0082'
-              checked={this.state.enableKeyPrediction}
-              onChange={() => this.setState({ enableKeyPrediction: !this.state.enableKeyPrediction })}
+              checked={this.state.enableDictionaryPrediction}
+              onChange={() => this.setState({ enableDictionaryPrediction: !this.state.enableDictionaryPrediction })}
             />
-            <label>Enabel letter By letter Prediction</label>
+            <label>Dictionary Prediction</label>
           </div>
         </div>
         <div className="Editor_container">
