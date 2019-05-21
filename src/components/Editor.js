@@ -24,7 +24,7 @@ class Editor extends React.Component {
     this.addHintFromDropDown = this.addHintFromDropDown.bind(this)
     this.state = {
       enableDictionaryPrediction: false,
-      enableLanguagePrediction: false,
+      enableLanguagePrediction: true,
       dictionary: false,
       passToDrop: {
         visible: false
