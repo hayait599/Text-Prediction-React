@@ -32,8 +32,7 @@ class Editor extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.editorRef = this.quillRef.getEditor();
+  componentWillMount() {
     window.onclick = this.onClick;
     window.oncontextmenu = this.onClick;
   }
@@ -60,12 +59,8 @@ class Editor extends React.Component {
   }
 
   deleteHint({ rangeFrom, word }) {
-    // let toDelete = document.getElementsByTagName('span')[0]
-    // if (toDelete) {
-    //   toDelete.remove();
-    //   this.hintVisible = null
-    // }
-    this.editorRef.deleteText(rangeFrom.index, word.length);
+    this.editorRef = this.quillRef.getEditor();
+    this.editorRef.deleteText(rangeFrom.index, word.length, Quill.sources.API);
     this.hintVisible = null
   }
 
@@ -78,7 +73,7 @@ class Editor extends React.Component {
       word.length + 1, {
         'color': '#000000'
       });
-    this.editorRef.deleteText(cursorPosition - 1, 1, Quill.sources.USER);
+    this.editorRef.deleteText(cursorPosition - 1, 1, Quill.sources.API);
     this.editorRef.setSelection(cursorPosition + `${word}`.length - 1, Quill.sources.API);
     this.hintVisible = null
   }
@@ -97,13 +92,13 @@ class Editor extends React.Component {
     const cursorPosition = this.editorRef.getSelection().index;
     if (this.state.dictionary) {
       text = `${text.slice(lastWord.length, text.length)}`
-      this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER)
+      this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.API)
     } else {
-      this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.USER);
+      this.editorRef.insertText(cursorPosition - 1, `${text}`, Quill.sources.API);
     }
 
-    this.editorRef.setSelection(cursorPosition + `${text}`.length - 1, Quill.sources.USER);
-    this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.USER);
+    this.editorRef.setSelection(cursorPosition + `${text}`.length - 1, Quill.sources.API);
+    this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.API);
   };
 
   async getHints() {
@@ -111,32 +106,35 @@ class Editor extends React.Component {
     if (blot) {
       const text = blot.text;
       if (text) {
-        const hintText = text.trim().split(' ').splice(-1).join(' ');
-        const hints = await Api.getHints({ hintText })
-        if (hints) {
-          if (hints.length > 2) {
-            const height = (window.innerHeight || document.documentElement.clientHeight);
-            const parentNode = ReactDOM.findDOMNode(this.quillRef).getBoundingClientRect();
-            const distanceToTop = parentNode.top - 6;
-            const distanceToBottom = height - parentNode.bottom - 6;
-            this.editorRef = this.quillRef.getEditor()
-            const range = this.editorRef.getSelection();
-            const bounds = this.editorRef.getBounds(range);
-            const hintsArray = hints.map(item => item.word)
-            this.setState({
-              dictionary: false,
-              passToDrop: {
-                ...this.state.passToDrop,
-                visible: true,
-                bounds,
-                distanceToBottom,
-                distanceToTop,
-                hintsArray
-              }
-            })
-            return
+        const space = text.split(' ');
+        if (space[space.length - 1] !== '') {
+          const hintText = text.trim().split(' ').splice(-1).join(' ');
+          const hints = await Api.getHints({ hintText })
+          if (hints) {
+            if (hints.length > 2) {
+              const height = (window.innerHeight || document.documentElement.clientHeight);
+              const parentNode = ReactDOM.findDOMNode(this.quillRef).getBoundingClientRect();
+              const distanceToTop = parentNode.top - 6;
+              const distanceToBottom = height - parentNode.bottom - 6;
+              this.editorRef = this.quillRef.getEditor()
+              const range = this.editorRef.getSelection();
+              const bounds = this.editorRef.getBounds(range);
+              const hintsArray = hints.map(item => item.word)
+              this.setState({
+                dictionary: false,
+                passToDrop: {
+                  ...this.state.passToDrop,
+                  visible: true,
+                  bounds,
+                  distanceToBottom,
+                  distanceToTop,
+                  hintsArray
+                }
+              })
+              return
+            }
+            this.insertHint(hints[hints.length - 1].word)
           }
-          this.insertHint(hints[hints.length - 1].word)
         }
       }
     }
