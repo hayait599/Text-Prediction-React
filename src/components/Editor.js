@@ -101,6 +101,32 @@ class Editor extends React.Component {
     this.editorRef.deleteText(cursorPosition + `${text}`.length - 1, 1, Quill.sources.API);
   };
 
+  findLine() {
+    this.editorRef = this.quillRef.getEditor();
+    const cursorPosition = this.editorRef.selection.getNativeRange().end.offset;
+    const Parchment = Quill.import('parchment');
+    const selection = document.getSelection();
+    const node = selection.getRangeAt(0).startContainer
+    const blot = Parchment.find(node)
+    let block = blot;
+    while (block.statics.blotName !== 'block' && block.parent) {
+      block = block.parent;
+    }
+    const root = block.parent;
+    let cur;
+    const next = root.children.iterator();
+    let index = 0;
+    while (cur = next()) {
+      index++;
+      if (cur === block) break;
+    }
+    return {
+      index,
+      cursorPosition
+    };
+  };
+
+
   async getHints() {
     const blot = this.getBlot();
     if (blot) {
@@ -109,7 +135,8 @@ class Editor extends React.Component {
         const space = text.split(' ');
         if (space[space.length - 1] !== '') {
           const hintText = text.trim().split(' ').splice(-1).join(' ');
-          const hints = await Api.getHints({ hintText })
+          const { cursorPosition, index } = this.findLine();
+          const hints = await Api.getHints({ hintText, cursorPosition, index})
           if (hints) {
             if (hints.length > 2) {
               const height = (window.innerHeight || document.documentElement.clientHeight);
@@ -133,7 +160,7 @@ class Editor extends React.Component {
               })
               return
             }
-            this.insertHint(hints[hints.length - 1].word)
+            this.insertHint(hints[0].word)
           }
         }
       }
