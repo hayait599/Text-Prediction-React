@@ -126,7 +126,6 @@ class Editor extends React.Component {
     };
   };
 
-
   async getHints() {
     const blot = this.getBlot();
     if (blot) {
