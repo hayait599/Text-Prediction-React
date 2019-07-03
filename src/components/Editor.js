@@ -64,6 +64,17 @@ class Editor extends React.Component {
     this.hintVisible = null
   }
 
+  deleteEnerHint({ rangeFrom, word }) {
+    this.editorRef = this.quillRef.getEditor();
+    this.editorRef.deleteText(rangeFrom.index, word.length + 1, Quill.sources.API);
+    this.editorRef.insertText(
+      rangeFrom,
+      '\n',
+      'api'
+    );
+    this.hintVisible = null
+  }
+
   addHint() {
     this.editorRef = this.quillRef.getEditor();
     const cursorPosition = this.editorRef.getSelection().index;
@@ -135,7 +146,7 @@ class Editor extends React.Component {
         if (space[space.length - 1] !== '') {
           const hintText = text.trim().split(' ').splice(-1).join(' ');
           const { cursorPosition, index } = this.findLine();
-          const hints = await Api.getHints({ hintText, cursorPosition, index})
+          const hints = await Api.getHints({ hintText, cursorPosition, index })
           if (hints) {
             if (hints.length > 2) {
               const height = (window.innerHeight || document.documentElement.clientHeight);
@@ -261,6 +272,11 @@ class Editor extends React.Component {
     })
 
     if (keyCode === enterCode) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (this.hintVisible) {
+        this.deleteEnerHint(this.hintVisible);
+      }
       return
     }
 
